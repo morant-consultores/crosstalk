@@ -185,10 +185,10 @@ SharedData <- R6Class(
     #'   objects the same group name. (One example: in Shiny, ui.R and server.R
     #'   might each need their own \code{SharedData} instance, even though
     #'   they're intended to represent a single group.)
-    initialize = function(data, key = NULL, group = createUniqueId(4, prefix = "SharedData")) {
+    initialize = function(data, key = NULL, group = createUniqueId(4, prefix = "SharedData"), session) {
       private$.data <- data
-      private$.filterCV <- ClientValue$new("filter", group)
-      private$.selectionCV <- ClientValue$new("selection", group)
+      private$.filterCV <- ClientValue$new("filter", group, session = session)
+      private$.selectionCV <- ClientValue$new("selection", group, session = session)
       private$.rv <- reactiveValues()
       private$.group <- group
 
@@ -210,7 +210,7 @@ SharedData <- R6Class(
         })
       }
 
-      domain <- getDefaultReactiveDomain()
+      domain <- session#getDefaultReactiveDomain()
       if (!is.null(domain)) {
         shiny::observe({
           selection <- private$.selectionCV$get()
